@@ -11,6 +11,29 @@
         android:id="@+id/rvCharacter"
         android:padding="3dp"
         android:scrollbars="vertical"
-        android:background="@color/cardview_light_background"
         />
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/loadingPanelPaginacion"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"/>
+    </RelativeLayout>
 </RelativeLayout>

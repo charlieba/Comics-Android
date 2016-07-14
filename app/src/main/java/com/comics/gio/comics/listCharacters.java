@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.comics.gio.comics.utils.request;
 
@@ -24,47 +25,62 @@ public class listCharacters extends Fragment {
     RecyclerView rv;
     LinearLayoutManager llm;
     adapterCardViewCharacter adapter;
-
-    /* @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_characters);
-        characters=new ArrayList<itemCharacter>();
-        RecyclerView rv = (RecyclerView)findViewById(R.id.rvCharacter);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        rv.setLayoutManager(llm);
-
-        itemCharacter item= new itemCharacter();
-        item.setName("iron-man");
-        item.setThumbnail("http://i.annihil.us/u/prod/marvel/i/mg/9/c0/527bb7b37ff55.jpg");
-        characters.add(item);
-        item= new itemCharacter();
-        item.setName("thor");
-        item.setThumbnail("http://i.annihil.us/u/prod/marvel/i/mg/2/03/52321948a51f2.jpg");
-        characters.add(item);
-        adapterCardViewCharacter adapter = new adapterCardViewCharacter(this,characters);
-        rv.setAdapter(adapter);
-
-    }*/
+    int lastFirstVisiblePosition;
+    int ScrollY=0;
+    View rootView;
+    int page=1;
+    Boolean scroll=false;
+    int limit=20;
+    int skip=0;
+    RelativeLayout loading;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_list_characters, container, false);
+        rootView = inflater.inflate(R.layout.activity_list_characters, container, false);
         //rootView.setTag(TAG);
-
+        characters=new ArrayList<itemCharacter>();
         rv = (RecyclerView) rootView.findViewById(R.id.rvCharacter);
-
-        /*itemCharacter item= new itemCharacter();
-        item.setName("iron-man");
-        item.setThumbnail("http://i.annihil.us/u/prod/marvel/i/mg/9/c0/527bb7b37ff55.jpg");
-        characters.add(item);
-        item= new itemCharacter();
-        item.setName("thor");
-        item.setThumbnail("http://i.annihil.us/u/prod/marvel/i/mg/2/03/52321948a51f2.jpg");
-        characters.add(item);*/
-        /*adapter = new adapterCardViewCharacter(getActivity(),characters);
-        rv.setAdapter(adapter);*/
-        String[] params={"http://www.comicscharacter.com/get_character?"};
+        loading=(RelativeLayout) rootView.findViewById(R.id.loadingPanel);
+        String[] params={"http://www.comicscharacter.com/get_character?limit="+limit+"&skip="+skip};
         new HttpAsyncTask().execute(params);
+
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+
+                if ((!recyclerView.canScrollVertically(1))&&(characters.size()!=0)) {
+
+                    //System.out.println("Scroll: Llego al final");
+
+                    lastFirstVisiblePosition = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+                    page++;
+                    ScrollY=dy;
+                    //int ScrollX=dx;
+
+                    //System.out.println("ScrollY "+ScrollY);
+                    //view.findViewById(R.id.loadingPanelPaginacion).setVisibility(View.VISIBLE);
+                    scroll=true;
+                    skip=limit;
+                    limit=limit+20;
+                    String[] params={"http://www.comicscharacter.com/get_character?limit="+limit+"&skip="+skip};
+                    new HttpAsyncTask().execute(params);
+                    rootView.findViewById(R.id.loadingPanelPaginacion).setVisibility(View.VISIBLE);
+                    //String[] params={Request + "&page=" + page,"resultados"};
+                    //new HttpAsyncTask().execute(params);
+                    //recyclerView.setScrollY(ScrollY);
+                    //recyclerView.setScrollY(ScrollY);
+
+                    //recyclerView.scrollTo(ScrollX,ScrollY);
+                } else if (dy < 0) {
+                    // System.out.println("Scroll: Sube");
+                } else if (dy > 0) {
+                    //System.out.println("Scroll: Baja");
+                }
+            }
+        });
+
+
+
         return  rootView;
     }
 
@@ -85,7 +101,6 @@ public class listCharacters extends Fragment {
             //JSONObject json = null;
             try {
                 //json = new JSONObject(result);
-                characters=new ArrayList<itemCharacter>();
                 JSONArray jsonCharacters = new JSONArray(result);
                 itemCharacter item;
                 for(int i=0;i<jsonCharacters.length();i++){
@@ -102,6 +117,12 @@ public class listCharacters extends Fragment {
                 adapter = new adapterCardViewCharacter(getActivity(),characters);
                 rv.setAdapter(adapter);
 
+                if(scroll){
+                    ((LinearLayoutManager) rv.getLayoutManager()).scrollToPosition(lastFirstVisiblePosition);
+                    scroll=false;
+                }
+                loading.setVisibility(View.GONE);
+                rootView.findViewById(R.id.loadingPanelPaginacion).setVisibility(View.GONE);
             } catch (JSONException e) {
                 e.printStackTrace();
                 System.err.println(e.getMessage());

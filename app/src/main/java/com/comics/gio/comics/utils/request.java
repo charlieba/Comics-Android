@@ -20,6 +20,7 @@ public class request {
         try {
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
             if(in != null){
+                System.out.println("Request: "+url);
                 result = convertInputStreamToString(in);
             }
             else{
