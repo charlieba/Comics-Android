@@ -60,8 +60,7 @@ public class listCharacters extends Fragment {
                     //System.out.println("ScrollY "+ScrollY);
                     //view.findViewById(R.id.loadingPanelPaginacion).setVisibility(View.VISIBLE);
                     scroll=true;
-                    skip=limit;
-                    limit=limit+20;
+                    skip=skip+limit;
                     String[] params={"http://www.comicscharacter.com/get_character?limit="+limit+"&skip="+skip};
                     new HttpAsyncTask().execute(params);
                     rootView.findViewById(R.id.loadingPanelPaginacion).setVisibility(View.VISIBLE);
