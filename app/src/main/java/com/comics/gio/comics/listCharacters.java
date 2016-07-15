@@ -47,7 +47,6 @@ public class listCharacters extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
-
                 if ((!recyclerView.canScrollVertically(1))&&(characters.size()!=0)) {
 
                     //System.out.println("Scroll: Llego al final");
@@ -77,6 +76,7 @@ public class listCharacters extends Fragment {
                 }
             }
         });
+
 
 
 

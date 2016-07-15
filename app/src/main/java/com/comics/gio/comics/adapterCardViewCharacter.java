@@ -34,9 +34,17 @@ public class adapterCardViewCharacter extends RecyclerView.Adapter<adapterCardVi
 
         ViewHolder(View itemView) {
             super(itemView);
+
             cv = (CardView)itemView.findViewById(R.id.placeCard);
             tvName = (TextView)itemView.findViewById(R.id.tvName);
             ivCharacter = (ImageView)itemView.findViewById(R.id.ivthumb);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println("presiono "+items.get(getAdapterPosition()).getName());
+                }
+            });
         }
     }
     // Provide a suitable constructor (depends on the kind of dataset)
@@ -56,6 +64,15 @@ public class adapterCardViewCharacter extends RecyclerView.Adapter<adapterCardVi
     public void onBindViewHolder(adapterCardViewCharacter.ViewHolder holder, int position) {
         holder.tvName.setText(items.get(position).getName());
         Picasso.with(this.context).load(items.get(position).getThumbnail()).into(holder.ivCharacter);
+
+        //Here it is simply write onItemClick listener here
+      /*  holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+
+            }
+        });*/
     }
 
     @Override
