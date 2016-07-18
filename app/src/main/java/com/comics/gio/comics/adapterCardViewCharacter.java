@@ -1,6 +1,8 @@
 package com.comics.gio.comics;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -42,7 +44,14 @@ public class adapterCardViewCharacter extends RecyclerView.Adapter<adapterCardVi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("presiono "+items.get(getAdapterPosition()).getName());
+                    //System.out.println("presiono "+items.get(getAdapterPosition()).getName());
+                    Intent intent = new Intent(context, characterActivity.class);
+                    Bundle b = new Bundle();
+                    b.putString("detail", items.get(getAdapterPosition()).getDetail());
+                    b.putString("wiki", items.get(getAdapterPosition()).getWiki());
+                    b.putString("comics", items.get(getAdapterPosition()).getComicLink());
+                    intent.putExtras(b);
+                    context.startActivity(intent);
                 }
             });
         }

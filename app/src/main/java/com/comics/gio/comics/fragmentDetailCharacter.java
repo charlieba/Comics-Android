@@ -15,6 +15,13 @@ import android.webkit.WebViewClient;
  */
 public class fragmentDetailCharacter extends Fragment {
     View rootView;
+    String urlWV="";
+    fragmentDetailCharacter(){
+
+    }
+    fragmentDetailCharacter(String url){
+        urlWV=url;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_wiki_character, container, false);
@@ -49,7 +56,9 @@ public class fragmentDetailCharacter extends Fragment {
             }
 
         });
-        myWebView.loadUrl("http://marvel.com/characters/74/3-d_man?utm_campaign=apiRef&utm_source=52b6305c2146fd0f86ae99c9878fcdc2");
+        //myWebView.loadUrl("http://marvel.com/characters/74/3-d_man?utm_campaign=apiRef&utm_source=52b6305c2146fd0f86ae99c9878fcdc2");
+        System.out.println("WebView: "+urlWV);
+        myWebView.loadUrl(urlWV);
         return  rootView;
     }
 }

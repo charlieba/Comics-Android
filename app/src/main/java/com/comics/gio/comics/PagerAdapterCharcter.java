@@ -9,15 +9,21 @@ import android.support.v4.app.FragmentPagerAdapter;
  */
 public class PagerAdapterCharcter extends FragmentPagerAdapter {
     private static int NUM_ITEMS = 3;
-    fragmentComicsCharacter cc;
+    /*fragmentComicsCharacter cc;
     fragmentDetailCharacter dc;
-    fragmentWikiCharacter wc;
+    fragmentWikiCharacter wc;*/
+    fragmentDetailCharacter cc;
+    fragmentDetailCharacter dc;
+    fragmentDetailCharacter wc;
 
-    public PagerAdapterCharcter(FragmentManager fragmentManager) {
+    public PagerAdapterCharcter(FragmentManager fragmentManager, String detail, String wiki, String comics) {
         super(fragmentManager);
-        dc=new fragmentDetailCharacter();
+        /*dc=new fragmentDetailCharacter();
         wc=new fragmentWikiCharacter();
-        cc=new fragmentComicsCharacter();
+        cc=new fragmentComicsCharacter();*/
+        dc=new fragmentDetailCharacter(detail);
+        wc=new fragmentDetailCharacter(wiki);
+        cc=new fragmentDetailCharacter(comics);
     }
 
     @Override
@@ -37,5 +43,10 @@ public class PagerAdapterCharcter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return NUM_ITEMS;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return "Page " + (position + 1);
     }
 }

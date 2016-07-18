@@ -106,7 +106,20 @@ public class listCharacters extends Fragment {
                     item=new itemCharacter();
                     item.set_id(jsonCharacters.getJSONObject(i).get("_id").toString());
                     item.setTag(jsonCharacters.getJSONObject(i).get("tag").toString());
-                    //JSONArray jsonCharactersDetail = new JSONArray(jsonCharacters.getJSONObject(i).get("Detail"));
+                    JSONObject jsonDetail=new JSONObject();
+                    JSONArray jsonCharactersDetail = new JSONArray(jsonCharacters.getJSONObject(i).get("detail").toString());
+                        for(int j=0;j<jsonCharactersDetail.length();j++){
+
+                            if(jsonCharactersDetail.getJSONObject(j).get("type").toString().equalsIgnoreCase("detail")){
+                                item.setDetail(jsonCharactersDetail.getJSONObject(j).get("url").toString());
+                            }else
+                            if(jsonCharactersDetail.getJSONObject(j).get("type").toString().equalsIgnoreCase("wiki")){
+                                item.setWiki(jsonCharactersDetail.getJSONObject(j).get("url").toString());
+                            }else
+                            if(jsonCharactersDetail.getJSONObject(j).get("type").toString().equalsIgnoreCase("comiclink")){
+                                item.setComicLink(jsonCharactersDetail.getJSONObject(j).get("url").toString());
+                            }
+                        }
                     item.setThumbnail(jsonCharacters.getJSONObject(i).get("thumbnail").toString());
                     item.setName(jsonCharacters.getJSONObject(i).get("name").toString());
                     characters.add(item);
