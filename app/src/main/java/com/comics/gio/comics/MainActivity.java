@@ -112,16 +112,27 @@ public class MainActivity extends AppCompatActivity
            /* Intent intent = new Intent(this, listCharacters.class);
             startActivity(intent);*/
             //startActivity(new Intent(this, listCharacters.class));
-            listCharacters lc=new listCharacters();
+            fragmentWikiCharacter lc=new fragmentWikiCharacter();
             FragmentTransaction ftResultados = fm.beginTransaction();
-            ftResultados.add(R.id.container, lc);
+            ftResultados.add(R.id.includeFragment, lc);
             ftResultados.commit();
 
         } else if (id == R.id.nav_slideshow) {
+            fragmentDetailCharacter lc=new fragmentDetailCharacter();
+            FragmentTransaction ftResultados = fm.beginTransaction();
+            ftResultados.add(R.id.includeFragment, lc);
+            ftResultados.commit();
 
         } else if (id == R.id.nav_manage) {
+            fragmentComicsCharacter lc=new fragmentComicsCharacter();
+            FragmentTransaction ftResultados = fm.beginTransaction();
+            ftResultados.add(R.id.includeFragment, lc);
+            ftResultados.commit();
 
         } else if (id == R.id.nav_share) {
+            Intent intent = new Intent(this, characterActivity.class);
+            startActivity(intent);
+            startActivity(new Intent(this, listCharacters.class));
 
         } else if (id == R.id.nav_send) {
 
