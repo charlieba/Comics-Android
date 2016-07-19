@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import android.os.StrictMode;
+import android.widget.AdapterView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -97,6 +98,13 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onSearchViewClosed() {
+                //Do some magic
+            }
+        });
+
+        searchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Do some magic
             }
         });
