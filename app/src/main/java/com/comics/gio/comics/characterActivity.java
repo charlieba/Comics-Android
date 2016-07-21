@@ -1,8 +1,12 @@
 package com.comics.gio.comics;
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 
 /**
@@ -10,11 +14,17 @@ import android.support.v7.app.AppCompatActivity;
  */
 public class characterActivity extends AppCompatActivity {
     PagerAdapterCharcter adapterViewPager;
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_pager_character);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Bundle b = getIntent().getExtras();
         String detail ="";
@@ -31,6 +41,10 @@ public class characterActivity extends AppCompatActivity {
         vpPager.setOffscreenPageLimit(3);
         vpPager.setAdapter(adapterViewPager);
 
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(vpPager);
+
     }
+
 
 }

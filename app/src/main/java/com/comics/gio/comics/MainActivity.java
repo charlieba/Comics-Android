@@ -141,6 +141,10 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onSearchViewClosed() {
+                listCharacters lc=new listCharacters();
+                FragmentTransaction ftResultados = fm.beginTransaction();
+                ftResultados.replace(R.id.includeFragment, lc);
+                ftResultados.commit();
                 //Do some magic
             }
         });
