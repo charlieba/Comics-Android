@@ -102,17 +102,33 @@ public class MainActivity extends AppCompatActivity
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                System.out.println("query "+query);
-                String[] resp={query};
-                searchView.setSuggestions(resp);
-                //Do some magic
+                if(query!="" && query!=null && query!=" "){
+                    query=query.replace(" ","%20");
+                    listCharacters lc=new listCharacters();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("searchQuery",query);
+                    lc.setArguments(bundle);
+                    FragmentTransaction ftResultados = fm.beginTransaction();
+                    ftResultados.replace(R.id.includeFragment, lc);
+                    ftResultados.commit();
+                    return true;
+                }
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                System.out.println("newText "+newText);
-                //Do some magic
+                if(newText!="" && !newText.equalsIgnoreCase("") && newText!=null){
+                    newText=newText.replace(" ","%20");
+                    listCharacters lc=new listCharacters();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("searchQuery",newText);
+                    lc.setArguments(bundle);
+                    FragmentTransaction ftResultados = fm.beginTransaction();
+                    ftResultados.replace(R.id.includeFragment, lc);
+                    ftResultados.commit();
+                    return true;
+                }
                 return false;
             }
         });

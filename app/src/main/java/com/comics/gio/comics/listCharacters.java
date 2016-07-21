@@ -40,42 +40,60 @@ public class listCharacters extends Fragment {
         characters=new ArrayList<itemCharacter>();
         rv = (RecyclerView) rootView.findViewById(R.id.rvCharacter);
         loading=(RelativeLayout) rootView.findViewById(R.id.loadingPanel);
-        String[] params={"http://www.comicscharacter.com/get_character?limit="+limit+"&skip="+skip};
-        new HttpAsyncTask().execute(params);
 
-        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        String searchQuery = "";
+        Bundle bundle=getArguments();
 
-                if ((!recyclerView.canScrollVertically(1))&&(characters.size()!=0)) {
-
-                    //System.out.println("Scroll: Llego al final");
-
-                    lastFirstVisiblePosition = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
-                    page++;
-                    ScrollY=dy;
-                    //int ScrollX=dx;
-
-                    //System.out.println("ScrollY "+ScrollY);
-                    //view.findViewById(R.id.loadingPanelPaginacion).setVisibility(View.VISIBLE);
-                    scroll=true;
-                    skip=skip+limit;
-                    String[] params={"http://www.comicscharacter.com/get_character?limit="+limit+"&skip="+skip};
-                    new HttpAsyncTask().execute(params);
-                    rootView.findViewById(R.id.loadingPanelPaginacion).setVisibility(View.VISIBLE);
-                    //String[] params={Request + "&page=" + page,"resultados"};
-                    //new HttpAsyncTask().execute(params);
-                    //recyclerView.setScrollY(ScrollY);
-                    //recyclerView.setScrollY(ScrollY);
-
-                    //recyclerView.scrollTo(ScrollX,ScrollY);
-                } else if (dy < 0) {
-                    // System.out.println("Scroll: Sube");
-                } else if (dy > 0) {
-                    //System.out.println("Scroll: Baja");
-                }
+        if(bundle !=null){
+            if(bundle.containsKey("searchQuery")){
+                searchQuery=getArguments().getString("searchQuery");
             }
-        });
+        }
+        if(searchQuery!="" && searchQuery!=null){
+            String[] params={"http://www.comicscharacter.com/search?key="+searchQuery};
+            new HttpAsyncTask().execute(params);
+        }else{
+            String[] params={"http://www.comicscharacter.com/get_character?limit="+limit+"&skip="+skip};
+            new HttpAsyncTask().execute(params);
+        }
+
+
+        if(searchQuery.equalsIgnoreCase("")){
+            rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                    if ((!recyclerView.canScrollVertically(1))&&(characters.size()!=0)) {
+
+                        //System.out.println("Scroll: Llego al final");
+
+                        lastFirstVisiblePosition = ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+                        page++;
+                        ScrollY=dy;
+                        //int ScrollX=dx;
+
+                        //System.out.println("ScrollY "+ScrollY);
+                        //view.findViewById(R.id.loadingPanelPaginacion).setVisibility(View.VISIBLE);
+                        scroll=true;
+                        skip=skip+limit;
+                        String[] params={"http://www.comicscharacter.com/get_character?limit="+limit+"&skip="+skip};
+                        new HttpAsyncTask().execute(params);
+                        rootView.findViewById(R.id.loadingPanelPaginacion).setVisibility(View.VISIBLE);
+                        //String[] params={Request + "&page=" + page,"resultados"};
+                        //new HttpAsyncTask().execute(params);
+                        //recyclerView.setScrollY(ScrollY);
+                        //recyclerView.setScrollY(ScrollY);
+
+                        //recyclerView.scrollTo(ScrollX,ScrollY);
+                    } else if (dy < 0) {
+                        // System.out.println("Scroll: Sube");
+                    } else if (dy > 0) {
+                        //System.out.println("Scroll: Baja");
+                    }
+                }
+            });
+        }
+
 
 
 
@@ -126,9 +144,10 @@ public class listCharacters extends Fragment {
                 }
                 llm = new LinearLayoutManager(getActivity());
                 rv.setLayoutManager(llm);
-                adapter = new adapterCardViewCharacter(getActivity(),characters);
-                rv.setAdapter(adapter);
-
+                if(getActivity()!=null){
+                    adapter = new adapterCardViewCharacter(getActivity(),characters);
+                    rv.setAdapter(adapter);
+                }
                 if(scroll){
                     ((LinearLayoutManager) rv.getLayoutManager()).scrollToPosition(lastFirstVisiblePosition);
                     scroll=false;
