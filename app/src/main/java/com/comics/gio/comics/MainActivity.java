@@ -4,6 +4,7 @@ import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
@@ -27,23 +28,48 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import android.os.StrictMode;
 import android.widget.AdapterView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     android.support.v4.app.FragmentManager fm;
     MaterialSearchView searchView;
+    //String[] suggestion1;
+    ArrayList<String> suggestion;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fm=getSupportFragmentManager();
-       /* if (android.os.Build.VERSION.SDK_INT > 9) {
+         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
-        }*/
+        }
+        suggestion=new ArrayList();
+        //suggestion1=new String[3000];
+        request request=new request();
+        try {
+            String[] url={"http://www.comicscharacter.com/get_character?"};
+            String respuesta= request.get_request(url);
+            JSONArray jsonCharacters = new JSONArray(respuesta.toString());
+            for (int i=0;i<jsonCharacters.length();i++){
+               suggestion.add(jsonCharacters.getJSONObject(i).get("name").toString());
+                //suggestion1[i]=jsonCharacters.getJSONObject(i).get("name").toString();
+            }
+            System.out.println(respuesta);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -68,26 +94,24 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ftResultados = fm.beginTransaction();
         ftResultados.add(R.id.includeFragment, lc);
         ftResultados.commit();
-       request r=new request();
-      /* try {
-            String respuesta= r.get_request("http://www.comicscharacter.com/get_character?limit=5&skip=0");
-            System.out.println(respuesta);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
         searchView = (MaterialSearchView) findViewById(R.id.search_view);
         searchView.setVoiceSearch(true);
-        searchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
+        //searchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
+        String[] stringArray =  Arrays.copyOf(suggestion.toArray(),suggestion.size(),String[].class);
+        searchView.setSuggestions(stringArray);
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                System.out.println("query "+query);
+                String[] resp={query};
+                searchView.setSuggestions(resp);
                 //Do some magic
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                System.out.println("newText "+newText);
                 //Do some magic
                 return false;
             }
@@ -108,6 +132,7 @@ public class MainActivity extends AppCompatActivity
         searchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println(parent.getItemAtPosition(position));
                 //Do some magic
             }
         });
@@ -133,17 +158,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-
-        /*SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo( searchManager.getSearchableInfo(getComponentName()) );*/
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        //searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
-
+        MenuItem item = menu.findItem(R.id.action_search);
+        searchView.setMenuItem(item);
         return true;
     }
 
@@ -222,12 +238,5 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-    @Override
-    public boolean onSearchRequested() {
-        Bundle appData = new Bundle();
-        appData.putString("hello", "world");
-        startSearch(null, false, appData, false);
-        return true;
     }
 }
