@@ -4,6 +4,9 @@ import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -13,6 +16,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,9 +28,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.comics.gio.comics.utils.request;
+import com.facebook.appevents.AppEventsLogger;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -37,6 +44,7 @@ import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import com.facebook.FacebookSdk;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -48,15 +56,32 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
         fm=getSupportFragmentManager();
          if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-        suggestion=new ArrayList();
+        //HASH KEY
+        /*try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.comics.gio.comics", PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                System.out.println("KeyHash: "+
+                        Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }*/
+        //suggestion=new ArrayList();
         //suggestion1=new String[3000];
         request request=new request();
-        try {
+        /*try {
             String[] url={"http://www.comicscharacter.com/get_character?"};
             String respuesta= request.get_request(url);
             JSONArray jsonCharacters = new JSONArray(respuesta.toString());
@@ -69,7 +94,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -97,8 +122,8 @@ public class MainActivity extends AppCompatActivity
         searchView = (MaterialSearchView) findViewById(R.id.search_view);
         searchView.setVoiceSearch(true);
         //searchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
-        String[] stringArray =  Arrays.copyOf(suggestion.toArray(),suggestion.size(),String[].class);
-        searchView.setSuggestions(stringArray);
+        /*String[] stringArray =  Arrays.copyOf(suggestion.toArray(),suggestion.size(),String[].class);
+        searchView.setSuggestions(stringArray);*/
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

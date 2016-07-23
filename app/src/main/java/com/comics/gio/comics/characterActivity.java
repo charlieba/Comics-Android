@@ -32,15 +32,23 @@ public class characterActivity extends AppCompatActivity {
         String detail ="";
         String wiki ="";
         String comics ="";
+        String thumbnail="";
+        String name="";
+        String description="";
         if(b != null){
             detail=b.getString("detail");
             wiki=b.getString("wiki");
             comics=b.getString("comics");
+            thumbnail=b.getString("thumbnail");
+            name=b.getString("name");
+            description=b.getString("description");
         }
 
+        setActionBarTitle(name);
+
         ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
-        adapterViewPager = new PagerAdapterCharcter(getSupportFragmentManager(), detail,wiki, comics);
-        vpPager.setOffscreenPageLimit(3);
+        adapterViewPager = new PagerAdapterCharcter(getSupportFragmentManager(), detail,wiki, comics,thumbnail,description);
+        vpPager.setOffscreenPageLimit(4);
         vpPager.setAdapter(adapterViewPager);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -60,6 +68,11 @@ public class characterActivity extends AppCompatActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
+    }
+
+
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 
 }

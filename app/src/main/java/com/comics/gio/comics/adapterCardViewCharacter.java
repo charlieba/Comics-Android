@@ -50,6 +50,9 @@ public class adapterCardViewCharacter extends RecyclerView.Adapter<adapterCardVi
                     b.putString("detail", items.get(getAdapterPosition()).getDetail());
                     b.putString("wiki", items.get(getAdapterPosition()).getWiki());
                     b.putString("comics", items.get(getAdapterPosition()).getComicLink());
+                    b.putString("thumbnail",items.get(getAdapterPosition()).getThumbnail());
+                    b.putString("name",items.get(getAdapterPosition()).getName());
+                    b.putString("description",items.get(getAdapterPosition()).getDescription());
                     intent.putExtras(b);
                     context.startActivity(intent);
                 }

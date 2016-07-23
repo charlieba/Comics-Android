@@ -139,6 +139,7 @@ public class listCharacters extends Fragment {
                             }
                         }
                     item.setThumbnail(jsonCharacters.getJSONObject(i).get("thumbnail").toString());
+                    item.setDescription(jsonCharacters.getJSONObject(i).get("description").toString());
                     item.setName(jsonCharacters.getJSONObject(i).get("name").toString());
                     characters.add(item);
                 }
