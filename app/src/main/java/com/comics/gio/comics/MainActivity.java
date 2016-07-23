@@ -8,6 +8,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
@@ -28,10 +30,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.comics.gio.comics.utils.request;
+import com.facebook.AccessToken;
+import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.widget.ProfilePictureView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.io.IOException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -39,12 +45,16 @@ import java.util.Arrays;
 
 import android.os.StrictMode;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.w3c.dom.Text;
+
 import com.facebook.FacebookSdk;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -59,6 +69,24 @@ public class MainActivity extends AppCompatActivity
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
         fm=getSupportFragmentManager();
+        if(isLoggedIn()){
+            System.out.println("Usuario esta logueado");
+            listCharacters lc=new listCharacters();
+            FragmentTransaction ftResultados = fm.beginTransaction();
+            ftResultados.add(R.id.includeFragment, lc);
+            ftResultados.commit();
+
+            Profile.getCurrentProfile().getId();
+            System.out.println("userid "+Profile.getCurrentProfile().getId());
+
+
+        }else{
+            System.out.println("Usuario NO esta logueado");
+            fragmentLogin lc=new fragmentLogin();
+            FragmentTransaction ftResultados = fm.beginTransaction();
+            ftResultados.replace(R.id.includeFragment, lc);
+            ftResultados.commit();
+        }
          if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
@@ -81,20 +109,6 @@ public class MainActivity extends AppCompatActivity
         //suggestion=new ArrayList();
         //suggestion1=new String[3000];
         request request=new request();
-        /*try {
-            String[] url={"http://www.comicscharacter.com/get_character?"};
-            String respuesta= request.get_request(url);
-            JSONArray jsonCharacters = new JSONArray(respuesta.toString());
-            for (int i=0;i<jsonCharacters.length();i++){
-               suggestion.add(jsonCharacters.getJSONObject(i).get("name").toString());
-                //suggestion1[i]=jsonCharacters.getJSONObject(i).get("name").toString();
-            }
-            System.out.println(respuesta);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -115,10 +129,10 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        listCharacters lc=new listCharacters();
+        /*listCharacters lc=new listCharacters();
         FragmentTransaction ftResultados = fm.beginTransaction();
         ftResultados.add(R.id.includeFragment, lc);
-        ftResultados.commit();
+        ftResultados.commit();*/
         searchView = (MaterialSearchView) findViewById(R.id.search_view);
         searchView.setVoiceSearch(true);
         //searchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
@@ -205,6 +219,13 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem item = menu.findItem(R.id.action_search);
         searchView.setMenuItem(item);
+        if(isLoggedIn()){
+            ImageView iv = (ImageView) findViewById(R.id.imageView);
+            Picasso.with(getApplicationContext()).load("https://graph.facebook.com/"+Profile.getCurrentProfile().getId()+"/picture?type=large&width=108").into(iv);
+
+            TextView tvNameFacebook=(TextView) findViewById(R.id.tvNameFacebook);
+            tvNameFacebook.setText(Profile.getCurrentProfile().getName());
+        }
         return true;
     }
 
@@ -235,31 +256,23 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
+            fragmentLogin lc=new fragmentLogin();
+            FragmentTransaction ftResultados = fm.beginTransaction();
+            ftResultados.replace(R.id.includeFragment, lc);
+            ftResultados.commit();
         } else if (id == R.id.nav_gallery) {
            /* Intent intent = new Intent(this, listCharacters.class);
             startActivity(intent);*/
             //startActivity(new Intent(this, listCharacters.class));
-            fragmentWikiCharacter lc=new fragmentWikiCharacter();
-            FragmentTransaction ftResultados = fm.beginTransaction();
-            ftResultados.add(R.id.includeFragment, lc);
-            ftResultados.commit();
+
 
         } else if (id == R.id.nav_slideshow) {
-            fragmentDetailCharacter lc=new fragmentDetailCharacter();
-            FragmentTransaction ftResultados = fm.beginTransaction();
-            ftResultados.add(R.id.includeFragment, lc);
-            ftResultados.commit();
+
 
         } else if (id == R.id.nav_manage) {
-            fragmentComicsCharacter lc=new fragmentComicsCharacter();
-            FragmentTransaction ftResultados = fm.beginTransaction();
-            ftResultados.add(R.id.includeFragment, lc);
-            ftResultados.commit();
+
 
         } else if (id == R.id.nav_share) {
-            Intent intent = new Intent(this, characterActivity.class);
-            startActivity(intent);
-            startActivity(new Intent(this, listCharacters.class));
 
         } else if (id == R.id.nav_send) {
 
@@ -283,5 +296,16 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public boolean isLoggedIn() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        return accessToken != null;
+    }
+    public static Bitmap getFacebookProfilePicture(String userID) throws IOException {
+        URL imageURL = new URL("https://graph.facebook.com/" + userID + "/picture?type=large");
+        Bitmap bitmap = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
+
+        return bitmap;
     }
 }
