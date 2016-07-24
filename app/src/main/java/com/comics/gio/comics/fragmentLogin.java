@@ -1,24 +1,31 @@
 package com.comics.gio.comics;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.Profile;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.share.widget.ShareButton;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -35,10 +42,17 @@ public class fragmentLogin extends Fragment {
     CallbackManager callbackManager;
     android.support.v4.app.FragmentManager fm;
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        ((DrawerLocker) getActivity()).setDrawerEnabled(false);
+    }
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_login, container, false);
+
         loginButton = (LoginButton) rootView.findViewById(R.id.login_button);
-        loginButton.setReadPermissions("email");
+        loginButton.setReadPermissions("email,publish_actions");
         // If using in a fragment
         loginButton.setFragment(this);
         // Other app specific specialization
@@ -58,8 +72,9 @@ public class fragmentLogin extends Fragment {
                                 // Application code
                                 try {
                                     String email = object.getString("email");
-                                    System.out.println("email "+email);
-                                    //String birthday = object.getString("birthday");
+                                    ((DrawerLocker) getActivity()).setDrawerEnabled(true);
+                                    ((DrawerLocker) getActivity()).setProfile(true);
+
                                     fm = getActivity().getSupportFragmentManager();
                                     listCharacters lc=new listCharacters();
                                     FragmentTransaction ftResultados = fm.beginTransaction();
@@ -98,5 +113,14 @@ public class fragmentLogin extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_search);
+        item.setVisible(false);
+        menu.clear();
+        menu.close();
+    }
+
 
 }

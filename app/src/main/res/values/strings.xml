@@ -15,4 +15,5 @@
     </string-array>
     <string name="facebook_app_id">299885343694942</string>
     <string name="app_id">299885343694942</string>
+    <string name="share">Share</string>
 </resources>

@@ -47,7 +47,7 @@ public class characterActivity extends AppCompatActivity {
         setActionBarTitle(name);
 
         ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
-        adapterViewPager = new PagerAdapterCharcter(getSupportFragmentManager(), detail,wiki, comics,thumbnail,description);
+        adapterViewPager = new PagerAdapterCharcter(getSupportFragmentManager(), detail,wiki, comics,thumbnail,description, name);
         vpPager.setOffscreenPageLimit(4);
         vpPager.setAdapter(adapterViewPager);
 

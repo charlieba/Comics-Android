@@ -33,6 +33,7 @@ import com.comics.gio.comics.utils.request;
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
 import com.facebook.login.widget.ProfilePictureView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
@@ -57,11 +58,13 @@ import com.facebook.FacebookSdk;
 import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, DrawerLocker  {
     android.support.v4.app.FragmentManager fm;
     MaterialSearchView searchView;
     //String[] suggestion1;
     ArrayList<String> suggestion;
+    DrawerLayout drawer;
+    ActionBarDrawerToggle toggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,24 +72,6 @@ public class MainActivity extends AppCompatActivity
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
         fm=getSupportFragmentManager();
-        if(isLoggedIn()){
-            System.out.println("Usuario esta logueado");
-            listCharacters lc=new listCharacters();
-            FragmentTransaction ftResultados = fm.beginTransaction();
-            ftResultados.add(R.id.includeFragment, lc);
-            ftResultados.commit();
-
-            Profile.getCurrentProfile().getId();
-            System.out.println("userid "+Profile.getCurrentProfile().getId());
-
-
-        }else{
-            System.out.println("Usuario NO esta logueado");
-            fragmentLogin lc=new fragmentLogin();
-            FragmentTransaction ftResultados = fm.beginTransaction();
-            ftResultados.replace(R.id.includeFragment, lc);
-            ftResultados.commit();
-        }
          if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
@@ -121,8 +106,8 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
@@ -196,6 +181,25 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        if(isLoggedIn()){
+            //System.out.println("Usuario esta logueado");
+            listCharacters lc=new listCharacters();
+            FragmentTransaction ftResultados = fm.beginTransaction();
+            ftResultados.add(R.id.includeFragment, lc);
+            ftResultados.commit();
+
+            Profile.getCurrentProfile().getId();
+           // System.out.println("userid "+Profile.getCurrentProfile().getId());
+
+
+        }else{
+            //System.out.println("Usuario NO esta logueado");
+            fragmentLogin lc=new fragmentLogin();
+            FragmentTransaction ftResultados = fm.beginTransaction();
+            ftResultados.replace(R.id.includeFragment, lc);
+            ftResultados.commit();
+        }
+
 
     }
 
@@ -219,13 +223,7 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem item = menu.findItem(R.id.action_search);
         searchView.setMenuItem(item);
-        if(isLoggedIn()){
-            ImageView iv = (ImageView) findViewById(R.id.imageView);
-            Picasso.with(getApplicationContext()).load("https://graph.facebook.com/"+Profile.getCurrentProfile().getId()+"/picture?type=large&width=108").into(iv);
-
-            TextView tvNameFacebook=(TextView) findViewById(R.id.tvNameFacebook);
-            tvNameFacebook.setText(Profile.getCurrentProfile().getName());
-        }
+        setProfile(true);
         return true;
     }
 
@@ -261,20 +259,18 @@ public class MainActivity extends AppCompatActivity
             ftResultados.replace(R.id.includeFragment, lc);
             ftResultados.commit();
         } else if (id == R.id.nav_gallery) {
-           /* Intent intent = new Intent(this, listCharacters.class);
-            startActivity(intent);*/
-            //startActivity(new Intent(this, listCharacters.class));
-
-
+            //LoginManager.getInstance().logOut();
         } else if (id == R.id.nav_slideshow) {
 
 
-        } else if (id == R.id.nav_manage) {
-
-
         } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+            if(isLoggedIn()){
+                LoginManager.getInstance().logOut();
+                fragmentLogin lc=new fragmentLogin();
+                FragmentTransaction ftResultados = fm.beginTransaction();
+                ftResultados.replace(R.id.includeFragment, lc);
+                ftResultados.commit();
+            }
 
         }
 
@@ -307,5 +303,30 @@ public class MainActivity extends AppCompatActivity
         Bitmap bitmap = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
 
         return bitmap;
+    }
+
+    @Override
+    public void setDrawerEnabled(boolean enabled) {
+        int lockMode = enabled ? DrawerLayout.LOCK_MODE_UNLOCKED :
+                DrawerLayout.LOCK_MODE_LOCKED_CLOSED;
+        drawer.setDrawerLockMode(lockMode);
+        toggle.setDrawerIndicatorEnabled(enabled);
+    }
+
+    @Override
+    public void setProfile(boolean enabled) {
+        if(enabled){
+            if(isLoggedIn()){
+                ImageView iv = (ImageView) findViewById(R.id.imageView);
+                Picasso.with(getApplicationContext()).load("https://graph.facebook.com/"+Profile.getCurrentProfile().getId()+"/picture?type=large&width=108").into(iv);
+                TextView tvNameFacebook=(TextView) findViewById(R.id.tvNameFacebook);
+                tvNameFacebook.setText(Profile.getCurrentProfile().getName());
+            }
+        }else{
+            ImageView iv = (ImageView) findViewById(R.id.imageView);
+            TextView tvNameFacebook=(TextView) findViewById(R.id.tvNameFacebook);
+            tvNameFacebook.setText("");
+        }
+
     }
 }

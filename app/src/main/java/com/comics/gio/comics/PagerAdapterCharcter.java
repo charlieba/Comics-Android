@@ -19,7 +19,7 @@ public class PagerAdapterCharcter extends FragmentPagerAdapter {
     fragmentCharacterHome ch;
     boolean existsWiki=false;
     String[] titlePages={"WIKI","DETAIL","COMICS",""};
-    public PagerAdapterCharcter(FragmentManager fragmentManager, String detail, String wiki, String comics, String thumbnail, String description) {
+    public PagerAdapterCharcter(FragmentManager fragmentManager, String detail, String wiki, String comics, String thumbnail, String description,String name) {
         super(fragmentManager);
         /*dc=new fragmentDetailCharacter();
         wc=new fragmentWikiCharacter();
@@ -27,20 +27,20 @@ public class PagerAdapterCharcter extends FragmentPagerAdapter {
         dc=new fragmentDetailCharacter(detail);
         wc=new fragmentDetailCharacter(wiki);
         cc=new fragmentDetailCharacter(comics);
-        ch=new fragmentCharacterHome(thumbnail,description);
+        ch=new fragmentCharacterHome(thumbnail,description,name,wiki,detail);
         if(wiki!="" && !wiki.isEmpty() && wiki!=null){
             NUM_ITEMS=4;
             existsWiki=true;
             titlePages[0]="WIKI";
             titlePages[1]="DETAIL";
             titlePages[2]="COMICS";
-            titlePages[3]="HERO";
+            titlePages[3]="SHARE";
         }else{
             existsWiki=false;
             NUM_ITEMS=3;
             titlePages[0]="DETAIL";
             titlePages[1]="COMICS";
-            titlePages[2]="HERO";
+            titlePages[2]="SHARE";
         }
     }
 
