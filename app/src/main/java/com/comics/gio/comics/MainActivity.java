@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity
             // Handle the camera action
             listCharacters lc=new listCharacters();
             FragmentTransaction ftResultados = fm.beginTransaction();
-            ftResultados.add(R.id.includeFragment, lc);
+            ftResultados.replace(R.id.includeFragment, lc);
             ftResultados.commit();
         } else if (id == R.id.nav_gallery) {
             //LoginManager.getInstance().logOut();
