@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity
             ftResultados.add(R.id.includeFragment, lc);
             ftResultados.commit();
 
-            Profile.getCurrentProfile().getId();
+            //Profile.getCurrentProfile().getId();
            // System.out.println("userid "+Profile.getCurrentProfile().getId());
 
 
@@ -254,9 +254,9 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-            fragmentLogin lc=new fragmentLogin();
+            listCharacters lc=new listCharacters();
             FragmentTransaction ftResultados = fm.beginTransaction();
-            ftResultados.replace(R.id.includeFragment, lc);
+            ftResultados.add(R.id.includeFragment, lc);
             ftResultados.commit();
         } else if (id == R.id.nav_gallery) {
             //LoginManager.getInstance().logOut();
