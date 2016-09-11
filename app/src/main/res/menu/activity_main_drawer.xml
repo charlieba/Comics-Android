@@ -3,17 +3,25 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_Heroes"
             android:icon="@drawable/ic_menu_camera"
             android:title="All" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_topHeroes"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="TOP MARVEL HEROES" />
+            android:title="TOP HEROES" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_badGuys"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="BAD GUYS" />
+        <item
+            android:id="@+id/nav_WomenHeroes"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="WOMEN HEROES" />
+        <item
+            android:id="@+id/nav_TitanicTeams"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="TITANIC TEAMS" />
     </group>
 
     <item android:title="Communicate">

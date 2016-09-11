@@ -49,7 +49,19 @@ public class listCharacters extends Fragment {
                 searchQuery=getArguments().getString("searchQuery");
             }
         }
-        if(searchQuery!="" && searchQuery!=null){
+        if(searchQuery=="top_heroes"){
+            String[] params={"http://www.comicscharacter.com/get_top_heroes?"};
+            new HttpAsyncTask().execute(params);
+        }else if(searchQuery=="bad_guys"){
+            String[] params={"http://www.comicscharacter.com/get_bad_guys?"};
+            new HttpAsyncTask().execute(params);
+        }else if(searchQuery=="women_heroes"){
+            String[] params={"http://www.comicscharacter.com/get_women_heroes?"};
+            new HttpAsyncTask().execute(params);
+        }else if(searchQuery=="titanic_heroes"){
+            String[] params={"http://www.comicscharacter.com/get_titanic_teams?"};
+            new HttpAsyncTask().execute(params);
+        }else if(searchQuery!="" && searchQuery!=null){
             String[] params={"http://www.comicscharacter.com/search?key="+searchQuery};
             new HttpAsyncTask().execute(params);
         }else{
